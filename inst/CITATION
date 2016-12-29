@@ -1,0 +1,16 @@
+citEntry(entry="Article",
+	author=personList(as.person("Suleiman A. Khan"),
+		as.person("Muhammad Ammad-ud-din")),
+  title="tensorBF: an R package for Bayesian tensor factorization",
+  journal="bioRxiv",
+  volume="",
+  number="",
+  pages="1--6",
+  year="2016",
+  url="https://doi.org/10.1101/097048",
+	header="To cite tensorBF use:",
+	textVersion=paste("Suleiman A. Khan and Muhammad Ammad-ud-din.",
+		"tensorBF: an R package for Bayesian tensor factorization.",
+		"bioRxiv, 1--6, 2016.",
+		"https://doi.org/10.1101/097048")
+)
