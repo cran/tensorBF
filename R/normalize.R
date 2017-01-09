@@ -134,7 +134,7 @@ normFiberCentering <- function(Y,o)
 #' \dontrun{Yunscaled <- undoSlabScaling(Yscaled$data,Yscaled$pre)}
 undoSlabScaling <- function(Yn,pre)
 {
-  if(dim(Yn)!=3)
+  if(length(dim(Yn))!=3)
     stop("Yn should be a tensor.")
   sten = pre$scales
   o = pre$scalingMode
@@ -170,7 +170,7 @@ undoSlabScaling <- function(Yn,pre)
 #' \dontrun{Yuncentered <- undoFiberCentering(Ycentered$data,Ycentered$pre)}
 undoFiberCentering <- function(Yn,pre)
 {
-  if(dim(Yn)!=3)
+  if(length(dim(Yn))!=3)
     stop("Yn should be a tensor.")
 
   mten = pre$centers

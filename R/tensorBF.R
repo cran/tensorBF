@@ -737,7 +737,15 @@ tensorBF.compute <- function(Y,IsMat,K,opts){
   if(VERBOSE>=0) {
     print(paste0("Run completed with ",K," active components."))
   }
-  tau = tau[[1]][1,1] #for Bayesian CP
+
+  #Specialize the output for Bayesian CP
+  tau = tau[[1]][1,1]
+  W = W[[1]]
+  if(length(posterior)>0)
+    for(i in 1:length(posterior$W))
+    {
+      posterior$W[[i]] = posterior$W[[i]][[1]]
+    }
   return(list(X=X,W=W,U=U,K=K,tau=tau,posterior=posterior,cost=cost,opts=opts,conv=conv))
 }
 

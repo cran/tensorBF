@@ -29,7 +29,7 @@
 
 reconstructTensorBF <- function(res)
 {
-  recon = remake.tensor.samples.EV(res)[[1]]
+  recon = remake.tensor.samples.EV(res)
   if(is.null(res$pre)) {
     #print("reconstructTensorBF: Preprocessing information not specified in res$pre, returning reconstruction without un-normalization.")
   }else{
@@ -55,51 +55,33 @@ remake.tensor.samples.EV <- function(model,IsMat=-999)
   {
     md = getPosteriorSample(model$posterior,s)
     if(s == 1)
-      Rec = remake.tensor.mat(md,IsMat)
+      Rec = remake.tensor.mat(md)
     else
     {
-      RecSamp = remake.tensor.mat(md,IsMat)
-      for(m in 1:length(Rec))
-        Rec[[m]] = Rec[[m]] + RecSamp[[m]]
+        Rec = Rec + remake.tensor.mat(md)
     }
     if((s %% 100) == 0)
       cat(".",append=TRUE)
   }
-  for(m in 1:length(Rec))
-    Rec[[m]] = Rec[[m]]/samples
+  Rec = Rec/samples
   return(Rec)
 }
 
-remake.tensor.mat <- function(model,IsMat,kk="all")
+remake.tensor.mat <- function(model)
 {
-  return(make.tensor.mat(model,IsMat,kk))
+  return(make.tensor.mat(model))
 }
 
-make.tensor.mat <- function(model,IsMat,kk="all")
+make.tensor.mat <- function(model)
 {
   K = ncol(model$X)
-  if(kk=="all")
-    kk = 1:K
+  kk = 1:K
 
-  M <- length(model$W)
-  if(IsMat[1]==-999) IsMat = rep(0,M)
   Yestim <- list()
   ## Can be speeded up - see proof tensor
-  for(m in 1:M)
-  {
-    Yestim[[m]] <- 0
-
-    if(IsMat[m]==0)
-    {
-      for(k in kk)
-        Yestim[[m]] <- Yestim[[m]] + outer(outer(model$X[,k],model$W[[m]][,k]),model$U[,k])
-    }
-    else
-    {
-      for(k in kk)
-        Yestim[[m]] <- Yestim[[m]] + outer(model$X[,k],model$W[[m]][,k])
-    }
-  }
+  Yestim <- 0
+  for(k in kk)
+    Yestim <- Yestim + outer(outer(model$X[,k],model$W[,k]),model$U[,k])
 
   return(Yestim)
 }

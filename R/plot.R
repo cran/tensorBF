@@ -70,13 +70,13 @@ plotTensorBF <- function(res, Y=NULL, k=1, modesOnAxis=c(1,2,3), nTopFeatures=c(
   md = list()
   md$X = res$X
   md$U = res$U
-  md$W = res$W[[1]]
-  if(2==modesOnAxis[1]) md$X = res$W[[1]]
+  md$W = res$W#[[1]]
+  if(2==modesOnAxis[1]) md$X = res$W#[[1]]
   if(3==modesOnAxis[1]) md$X = res$U
   if(1==modesOnAxis[2]) md$W = res$X
   if(3==modesOnAxis[2]) md$W = res$U
   if(1==modesOnAxis[3]) md$U = res$X
-  if(2==modesOnAxis[3]) md$U = res$W[[1]]
+  if(2==modesOnAxis[3]) md$U = res$W#[[1]]
   Y = aperm(Y,modesOnAxis)
   nTopFeatures = nTopFeatures[modesOnAxis]
   mnames = c("X","W","U")[modesOnAxis]
