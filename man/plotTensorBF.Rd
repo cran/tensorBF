@@ -6,7 +6,8 @@
 \usage{
 plotTensorBF(res, Y = NULL, k = 1, modesOnAxis = c(1, 2, 3),
   nTopFeatures = c(5, 15, 3), margins = c(4, 4, 4, 12), cex.axis = 1,
-  cols = colorRampPalette(c("blue", "white", "red"))(101), key = TRUE)
+  cols = colorRampPalette(c("blue", "white", "red"))(101), key = TRUE,
+  plimit = NULL)
 }
 \arguments{
 \item{res}{The learned tensorBF model.}
@@ -29,6 +30,8 @@ of \eqn{1^{st}} mode, 20 of \eqn{2^{nd}} mode and 5 of \eqn{3^{rd}} mode.}
 \item{cols}{colors used for the image. Defaults to a blue-white-red color scale.}
 
 \item{key}{logical indicating whether a color-key should be drawn.}
+
+\item{plimit}{(optional) numerical number indicating the maximum absolute value to be plotted in the heatmap.}
 }
 \description{
 \code{plotTensorBF} shows the heatmap of components inferred by \code{\link{tensorBF}}.
@@ -47,4 +50,3 @@ for(k in 1:K) Y <- Y + outer(outer(X[,k],W[,k]),U[,k])
 \dontrun{res1 <- tensorBF(Y)}
 \dontrun{plotTensorBF(res = res1,Y=Y,k=1)}
 }
-

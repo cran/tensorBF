@@ -36,4 +36,3 @@ for(k in 1:K) Y <- Y + outer(outer(X[,k],W[,k]),U[,k])
 \dontrun{inds = sample(prod(dim(Y)),100)}
 \dontrun{plot(Y[inds],recon[inds],xlab="obs",ylab="recon",main=round(cor(Y[inds],recon[inds]),2))}
 }
-

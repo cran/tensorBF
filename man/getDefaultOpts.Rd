@@ -47,4 +47,3 @@ opts <- getDefaultOpts()
 opts$ARDW <- FALSE #Switch off Feature-level Sparsity on W's
  \dontrun{res <- tensorBF(Y=Y,opts=opts)}
 }
-

@@ -43,4 +43,3 @@ preprocessing information.
 \dontrun{pred = predictTensorBF(Y=Y,res=res)}
 \dontrun{plot(Yobs,pred[m.inds],xlab="obs",ylab="pred",main=round(cor(Yobs,pred[m.inds]),2))}
 }
-

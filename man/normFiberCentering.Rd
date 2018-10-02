@@ -37,4 +37,3 @@ dim(res$data) #the centered data
 \references{
 Kolda, Tamara G., and Brett W. Bader. "Tensor decompositions and applications." SIAM review 51.3 (2009): 455-500.
 }
-

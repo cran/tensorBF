@@ -65,18 +65,18 @@ library(tensor)
 #' #Data generation
 #' K <- 2
 #' X <- matrix(rnorm(20*K),20,K)
-#' W <- matrix(rnorm(30*K),30,K)
+#' W <- matrix(rnorm(25*K),25,K)
 #' U <- matrix(rnorm(3*K),3,K)
 #' Y = 0
 #' for(k in 1:K) Y <- Y + outer(outer(X[,k],W[,k]),U[,k])
-#'  Y <- Y + array(rnorm(20*30*3,0,0.25),dim=c(20,30,3))
+#'  Y <- Y + array(rnorm(20*25*3,0,0.25),dim=c(20,25,3))
 #'
 #' #Run the method with default options
 #' \dontrun{res2 <- tensorBF(Y=Y)}
 #'
 #' #Run the method with K=3 and iterations=1000
-#' opts <- getDefaultOpts(); opts$iter.burnin = 1000
-#' res1 <- tensorBF(Y=Y,K=3,opts=opts)
+#' \dontrun{opts <- getDefaultOpts(); opts$iter.burnin = 1000}
+#' \dontrun{res1 <- tensorBF(Y=Y,K=3,opts=opts)}
 #'
 #' #Vary the user defined expected proportion of noise variance
 #' #explained. c(0.2,1) represents 0.2 as the noise proportion
@@ -325,7 +325,7 @@ tensorBF.compute <- function(Y,IsMat,K,opts){
 	if(DEBUGMODE)
 		debug$zone[m,k] = logpr
 
-	if(iter > 500){
+	if(iter > 200){
 		a = Z[m,k]
 	  	Z[m,k] <- as.double((runif(1) < zone))
 	}
@@ -680,29 +680,28 @@ tensorBF.compute <- function(Y,IsMat,K,opts){
     if((sum(Z) == 0)){
       conv <- NA
       if(VERBOSE>0) print("No active components. Can not estimate convergence.")
-      break;
-    }
+    } else {
+      #Estimate the convergence of the data reconstruction, based on the Geweke diagnostic
+      ps <- floor(length(posterior$X)/4)
+      start <- 1:ps
+      end <- (-ps+1):0+length(posterior$X)
+      Df <- N*D*L
 
-    #Estimate the convergence of the data reconstruction, based on the Geweke diagnostic
-    ps <- floor(length(posterior$X)/4)
-    start <- 1:ps
-    end <- (-ps+1):0+length(posterior$X)
-    Df <- N*D*L
+      y <- matrix(NA,0,Df)
+      for(ps in c(start,end)) {
+        tmp <- rep(0,N*D*L)
+        for(k in 1:K)
+          tmp <- tmp + c(outer(outer(posterior$X[[ps]][,k],posterior$W[[ps]][[1]][,k]),posterior$U[[ps]][,k]))
+        y <- rbind(y, tmp)
+      }
 
-    y <- matrix(NA,0,Df)
-    for(ps in c(start,end)) {
-      tmp <- rep(0,N*D*L)
-      for(k in 1:K)
-        tmp <- tmp + c(outer(outer(posterior$X[[ps]][,k],posterior$W[[ps]][[1]][,k]),posterior$U[[ps]][,k]))
-      y <- rbind(y, tmp)
-    }
-
-    foo <- rep(NA,Df)
-    for(j in 1:Df)
-      foo[j] <- t.test(y[start,j],y[-start,j])$p.value
-    conv <- mean(foo<=0.05)
-    if(VERBOSE>0) {
-      print(paste0("Convergence diagnostic: ",round(conv,4),". Values significantly greater than 0.05 imply a non-converged model."))
+      foo <- rep(NA,Df)
+      for(j in 1:Df)
+        foo[j] <- t.test(y[start,j],y[-start,j])$p.value
+      conv <- mean(foo<=0.05)
+      if(VERBOSE>0) {
+        print(paste0("Convergence diagnostic: ",round(conv,4),". Values significantly greater than 0.05 imply a non-converged model."))
+      }
     }
   } else {
     conv <- NA

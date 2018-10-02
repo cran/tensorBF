@@ -4,8 +4,8 @@
 \alias{tensorBF}
 \title{Bayesian Factorization of a Tensor}
 \usage{
-tensorBF(Y, method = "CP", K = NULL, opts = NULL, fiberCentering = NULL,
-  slabScaling = NULL, noiseProp = c(0.5, 0.5))
+tensorBF(Y, method = "CP", K = NULL, opts = NULL,
+  fiberCentering = NULL, slabScaling = NULL, noiseProp = c(0.5, 0.5))
 }
 \arguments{
 \item{Y}{is a three-mode tensor to be factorized.}
@@ -80,18 +80,18 @@ with function \code{\link{predictTensorBF}}, based on the observed values.
 #Data generation
 K <- 2
 X <- matrix(rnorm(20*K),20,K)
-W <- matrix(rnorm(30*K),30,K)
+W <- matrix(rnorm(25*K),25,K)
 U <- matrix(rnorm(3*K),3,K)
 Y = 0
 for(k in 1:K) Y <- Y + outer(outer(X[,k],W[,k]),U[,k])
- Y <- Y + array(rnorm(20*30*3,0,0.25),dim=c(20,30,3))
+ Y <- Y + array(rnorm(20*25*3,0,0.25),dim=c(20,25,3))
 
 #Run the method with default options
 \dontrun{res2 <- tensorBF(Y=Y)}
 
 #Run the method with K=3 and iterations=1000
-opts <- getDefaultOpts(); opts$iter.burnin = 1000
-res1 <- tensorBF(Y=Y,K=3,opts=opts)
+\dontrun{opts <- getDefaultOpts(); opts$iter.burnin = 1000}
+\dontrun{res1 <- tensorBF(Y=Y,K=3,opts=opts)}
 
 #Vary the user defined expected proportion of noise variance
 #explained. c(0.2,1) represents 0.2 as the noise proportion
@@ -99,4 +99,3 @@ res1 <- tensorBF(Y=Y,K=3,opts=opts)
 \dontrun{res3 <- tensorBF(Y=Y,noiseProp=c(0.2,1))}
 
 }
-

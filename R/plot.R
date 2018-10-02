@@ -14,6 +14,7 @@
 #' @param cex.axis positive numbers, used as cex.axis (default: 1)
 #' @param cols colors used for the image. Defaults to a blue-white-red color scale.
 #' @param key logical indicating whether a color-key should be drawn.
+#' @param plimit (optional) numerical number indicating the maximum absolute value to be plotted in the heatmap.
 #' @export
 #' @examples
 #' #Data generation
@@ -28,7 +29,7 @@
 #' #Run the method with default options
 #' \dontrun{res1 <- tensorBF(Y)}
 #' \dontrun{plotTensorBF(res = res1,Y=Y,k=1)}
-plotTensorBF <- function(res, Y=NULL, k=1, modesOnAxis=c(1,2,3), nTopFeatures=c(5,15,3), margins=c(4,4,4,12), cex.axis=1, cols=colorRampPalette(c("blue","white","red"))(101), key=TRUE)
+plotTensorBF <- function(res, Y=NULL, k=1, modesOnAxis=c(1,2,3), nTopFeatures=c(5,15,3), margins=c(4,4,4,12), cex.axis=1, cols=colorRampPalette(c("blue","white","red"))(101), key=TRUE, plimit=NULL)
 {
   if(is.null(res)) stop("Please specify a correct model object.")
   if(is.null(k)) stop("Please specify a correct value of component k to plot.")
@@ -100,11 +101,12 @@ plotTensorBF <- function(res, Y=NULL, k=1, modesOnAxis=c(1,2,3), nTopFeatures=c(
 
 	w.inds.1 <- w.inds.1[hclust(dist(dd))$order] #reorder for clustering of genes
 	cex.a = cex.axis*1.3
-	Y <- plotlimitdata.tensor(Y,limit=3)
+	if(!is.null(plimit))
+	  Y <- plotlimitdata.tensor(Y,limit=plimit)
 	o.op <- par(mfcol=c(nTopFeatures[3]+key,1), oma=c(1,0,0,0.3),mar=c(0,margins[2],margins[3],margins[4])+0.2)
-	breaks <- 1:(length(cols) + 1)
+	col.brks <- 1:(length(cols) + 1)
 	extreme <- max(abs(Y), na.rm = TRUE)
-	breaks <- seq(-extreme, extreme, length = length(breaks))
+	col.brks <- seq(-extreme, extreme, length = length(col.brks))
 	cell.label.pos = c(-8.3,-21.2,-29.4)
 	m3Names = dimnames(Y)[[3]]
 	for(o in 1:nTopFeatures[3])
@@ -112,7 +114,7 @@ plotTensorBF <- function(res, Y=NULL, k=1, modesOnAxis=c(1,2,3), nTopFeatures=c(
   	if(o < nTopFeatures[3] && o > 1) { par(mar=c(margins[1]/2,margins[2],margins[3]/2,margins[4])+0.2); }
   	if(o == nTopFeatures[3]) par(mar=c(margins[1],margins[2],0,margins[4])+0.2)
   	dat <- Y[x.inds,w.inds.1,o]
-  	image(x=t(dat),col=cols,axes=FALSE,breaks=breaks)
+  	image(x=t(dat),col=cols,axes=FALSE,col.brks=col.brks)
   	axis(2,at=0.5,labels=paste(m3Names[o],"\n",mnames[3],": ",format(round(md$U[o,k],2),width=4,nsmall=2),sep=""),las=3,cex.axis=cex.a,tick=0)
 
   	if(o == 1){
@@ -127,9 +129,22 @@ plotTensorBF <- function(res, Y=NULL, k=1, modesOnAxis=c(1,2,3), nTopFeatures=c(
 	}
 	axis(3,at=seq(0,1,l=ncol(dat)),labels=rep("",ncol(dat)),las=1,cex.axis=cex.a)
 	axis(1,at=seq(0,1,l=ncol(dat)),labels=paste(mnames[2],":",format(round(md$W[w.inds.1,k],2),width=4),sep=""),las=2,cex.axis=cex.a)
-	if(key) plotKey(cols,breaks)
+	if(key) plotKey(cols,col.brks)
 	par(o.op);
 }#EndFunction
+
+# perspTensor <- function(res,modelTrue,K=1)
+# {
+#   if(is.null(res)) stop("Please specify a correct model object.")
+#   if(is.null(modelTrue)) stop("Please specify the True model object.")
+#   if(is.null(K)) stop("Please specify a correct value of component K to plot.")
+#
+#   op <- par(mfrow=c(K,2))
+#   for(i in 1:K){
+#     persp(1:nrow(res$X), 1:nrow(res$U), res$X[,i]%*%t(res$U[,i]),col=bluered(70),theta=30,phi=35,xlab="Z",ylab="U",zlab="Model's Estimated Value",main=i)
+#   }
+#   par(op)
+# }
 
 plotKey <- function(col,v)
 {
